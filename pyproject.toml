@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-field"
+version = "0.1.0"
+description = "Shared tensor field for within-agent room coordination with 9-channel semantics"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "SuperInstance"}]
+keywords = ["agent", "tensor", "field", "coordination", "rooms", "coupling"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+flux = ["flux-tensor-midi"]
+dev = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["agent_field*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
