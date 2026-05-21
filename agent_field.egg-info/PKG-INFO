@@ -9,7 +9,9 @@ Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers
 Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
 Requires-Python: >=3.10
+License-File: LICENSE
 Provides-Extra: flux
 Requires-Dist: flux-tensor-midi; extra == "flux"
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0; extra == "dev"
+Dynamic: license-file
