@@ -10,3 +10,5 @@ agent_field.egg-info/dependency_links.txt
 agent_field.egg-info/requires.txt
 agent_field.egg-info/top_level.txt
 tests/test_field.py
+tests/test_field_coverage.py
+tests/test_field_extended.py

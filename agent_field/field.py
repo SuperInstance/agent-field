@@ -89,7 +89,7 @@ class AgentField:
             self._clock = _SimpleClock(bpm=bpm)
         self._damping: float = damping
         self._tick_count: int = 0
-        self._lock: threading.Lock = threading.Lock()
+        self._lock: threading.RLock = threading.RLock()
 
     def __repr__(self) -> str:
         return f"AgentField(rooms={self._n}, ticks={self._tick_count})"
