@@ -1,8 +1,10 @@
 # agent-field
 
-**Shared tensor field for within-agent room coordination.**
+**Agent force fields — tensor rooms, vector math, particles, and flocking behaviors.**
 
 Each agent runs an `AgentField` — a thread-safe 9-channel tensor with coupling, gap detection, and chirality tracking. Rooms are views into the shared tensor. Coupling is a matrix. Gaps self-organize.
+
+Also includes `Vector2D`/`Vector3D`, `Particle2D`/`Particle3D`, a `Simulation2D` engine, and classic agent behaviors (flocking, swarming, orbiting, avoidance).
 
 Extracted from `plato-training`. Standalone, pure Python. Optionally integrates with `flux-tensor-midi` for `FluxVector` / `TZeroClock` support.
 
@@ -156,14 +158,92 @@ pytest tests/
 
 ```
 agent_field/
-├── __init__.py     # Exports AgentField, RoomMeta, CHANNEL_NAMES
-├── field.py        # All implementation
+├── __init__.py     # Exports AgentField, RoomMeta, CHANNEL_NAMES, vectors, particles, behaviors
+├── field.py        # AgentField — tensor room coordination
+├── vector.py       # Vector2D / Vector3D with arithmetic and magnitude
+├── particle.py     # Particle2D / Particle3D with seek, flee, forces
+├── simulation.py   # Simulation2D engine with timestep integration
+├── behavior.py     # Flocking, swarming, orbiting, avoidance behaviors
 ├── py.typed        # PEP 561 marker
 tests/
 ├── test_field.py
 ├── test_field_extended.py
-└── test_field_coverage.py
+├── test_field_coverage.py
+├── test_vector.py
+├── test_particle.py
+├── test_behavior.py
+└── test_simulation.py
 ```
+
+## Vector Math
+
+### `Vector2D(x=0.0, y=0.0)` / `Vector3D(x=0.0, y=0.0, z=0.0)`
+
+Immutable vectors with `+`, `-`, `*`, `/`, `magnitude`, `normalized()`, `dot()`, `distance_to()`, `limit()`, `clamp()`. `Vector3D` also has `cross()`.
+
+```python
+from agent_field import Vector2D
+
+v = Vector2D(3, 4)
+print(v.magnitude)         # 5.0
+print(v.normalized())      # Vector2D(0.6, 0.8)
+print(v.distance_to(Vector2D(0, 0)))  # 5.0
+print(v.rotated(1.5708))   # ~Vector2D(-4, 3)
+```
+
+## Particles
+
+### `Particle2D` / `Particle3D`
+
+Dataclass with `position`, `velocity`, `acceleration`, `mass`, `max_speed`, `max_force`.
+
+```python
+from agent_field import Particle2D, Vector2D
+
+p = Particle2D(position=Vector2D(0, 0), max_speed=3.0, max_force=1.0)
+p.apply_force(Vector2D(1, 0))
+p.update(dt=1.0)
+print(p.position)  # Vector2D(1, 0)
+
+# Steering
+steer = p.seek(Vector2D(10, 0))
+steer = p.flee(Vector2D(-10, 0), radius=15.0)
+```
+
+## Simulation Engine
+
+### `Simulation2D`
+
+```python
+from agent_field import Simulation2D, Particle2D, Vector2D, flocking
+
+sim = Simulation2D(bounds=(0, 0, 200, 200))
+for i in range(20):
+    sim.add_particle(Particle2D(
+        position=Vector2D(100 + i * 2, 100),
+        max_speed=2.0,
+        max_force=0.5,
+    ))
+sim.behaviors.append(flocking)
+sim.run(100)
+print(f"Avg speed: {sim.average_speed():.2f}")
+print(f"Center of mass: {sim.center_of_mass()}")
+```
+
+## Behaviors
+
+Functions that take `(agent, neighbors)` and return a steering force:
+
+| Function | Description |
+|----------|-------------|
+| `attract(agent, target, strength)` | Linear pull toward a point |
+| `repel(agent, threat, strength, radius)` | Inverse-distance push from a point |
+| `align(agent, neighbors, radius)` | Match average heading |
+| `cohesion(agent, neighbors, radius)` | Steer toward center of mass |
+| `separation(agent, neighbors, radius, weight)` | Avoid crowding |
+| `flocking(agent, neighbors, ...)` | Classic boids: align + cohesion + separation |
+| `orbit(agent, center, radius, speed)` | Tangential + radial spring for circular orbits |
+| `avoidance(agent, obstacles, radius, strength)` | Repel from fixed obstacles |
 
 ## Related Repos
 

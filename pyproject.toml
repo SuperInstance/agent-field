@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-field"
-version = "0.1.0"
-description = "Shared tensor field for within-agent room coordination with 9-channel semantics"
+version = "0.2.0"
+description = "Agent force fields — tensor rooms, vector math, particles, and flocking behaviors"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{name = "SuperInstance"}]
