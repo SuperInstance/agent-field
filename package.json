@@ -1,6 +1,6 @@
 {
   "name": "@superinstance/agent-field",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Shared tensor field for within-agent room coordination with 9-channel semantics",
   "license": "MIT",
   "repository": {
